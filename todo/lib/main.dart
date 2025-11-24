@@ -22,7 +22,7 @@ class HomePage extends StatefulWidget{
 
 class HomePageState extends State<HomePage>{
 
-  List<String> tasks=[];
+  List<String> tasks=[];  //normal array
 
   @override
   Widget build(BuildContext context){
@@ -31,14 +31,14 @@ class HomePageState extends State<HomePage>{
 
       floatingActionButton: FloatingActionButton(
         onPressed:() async{
-          final result = await Navigator.push(
+          final result = await Navigator.push(   //opens task page and waits for data
             context,
             MaterialPageRoute(builder: (context)=> AddTaskPage()),
             );
 
             if(result!=null && result.toString().trim().isNotEmpty){
               setState(() {
-                tasks.add(result);
+                tasks.add(result);  //adds task to the list
               });
             }
         },
@@ -46,10 +46,18 @@ class HomePageState extends State<HomePage>{
         ),
 
         body: ListView.builder(
-          itemCount: tasks.length,
+          itemCount: tasks.length,  //shows task on screen one by one
           itemBuilder: (context,index){
             return ListTile(
               title: Text(tasks[index]),
+              trailing: IconButton(
+                icon : Icon(Icons.delete),
+              onPressed:(){
+                setState(() {
+                  tasks.removeAt(index);
+                });
+              }
+              ),
             );
           },
         ),
