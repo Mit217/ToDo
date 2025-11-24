@@ -18,7 +18,7 @@ class AddTaskPageState extends State<AddTaskPage>{
           TextField(
             controller: taskController, //controls text inside textfield
             decoration: InputDecoration(
-              labelText: "Task Name",
+              labelText: "Enter Task",
               border : OutlineInputBorder(),
             ),
           ),
@@ -28,7 +28,7 @@ class AddTaskPageState extends State<AddTaskPage>{
             onPressed:(){
               String newTask = taskController.text;
 
-              Navigator.pop(context,newTask);//nvaigator manages the stack of screens
+              Navigator.pop(context,newTask);//navigator manages the stack of screens
             },
             child : Text("Save Task"),
             )
