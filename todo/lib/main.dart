@@ -9,17 +9,28 @@ class MyApp extends StatelessWidget{  //stateless eg "hello" that doesnt need to
   Widget build(BuildContext context){ //build tells Flutter WHAT to show on screen
     return MaterialApp(   //buildcontext gives the location in widget tree eg who is the parent etc
       title:'ToDo',     //like the address
-      home:TaskPage(),
+      home:HomePage(),
     );
   }
 }
 
-class TaskPage extends StatelessWidget{
+class HomePage extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(title:Text('Tasks')),
-      body: Center(child:(Text('Your tasks will be here'))),
+      body: Center(
+        child:Text(
+          "No tasks yet!",
+          style:TextStyle(fontSize: 20),
+      ),
+      ),
+      floatingActionButton : FloatingActionButton(
+        onPressed:(){
+
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }
