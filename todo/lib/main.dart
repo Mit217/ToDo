@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:todo/addtask_page.dart'; //provides widgets like scaffold,text etc
-
-void main() {
+import 'package:todo/addtask_page.dart';
+import 'package:todo/login_page.dart'; //provides widgets like scaffold,text etc
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options : DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());    //like launch(args)
 }
 
@@ -10,7 +17,25 @@ class MyApp extends StatelessWidget{  //stateless eg "hello" that doesnt need to
   Widget build(BuildContext context){ //build tells Flutter WHAT to show on screen
     return MaterialApp(   //buildcontext gives the location in widget tree eg who is the parent etc
       title:'ToDo',     //like the address
-      home:HomePage(),
+      home:AuthGate(),
+      routes:{
+        "/home":(context)=>HomePage(),
+      }
+    );
+  }
+}
+
+class AuthGate extends StatelessWidget{
+  @override
+  Widget build(BuildContext context){
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(), 
+      builder: (context,snapshot){
+        if(snapshot.hasData){
+          return HomePage();
+        }
+        return LoginPage();
+      },
     );
   }
 }
