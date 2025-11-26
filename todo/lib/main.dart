@@ -81,6 +81,7 @@ class HomePageState extends State<HomePage>{
                     "task":task,
                     "uid":uid,
                     "createdAt":Timestamp.now(),
+                    "isDone":false,
                 });
               }
             },
@@ -90,6 +91,7 @@ class HomePageState extends State<HomePage>{
           stream: FirebaseFirestore.instance
             .collection("tasks")
             .where("uid",isEqualTo:uid)
+            .orderBy("isDone")
             .orderBy("createdAt")
             .snapshots(),   //for live updates
           builder:(context,snapshot){ //streambuilder listens to firestore like radio
@@ -106,16 +108,40 @@ class HomePageState extends State<HomePage>{
               itemCount: docs.length,
               itemBuilder: (context,index){
                   final taskData=docs[index];
-                return ListTile(
-                  title: Text(docs[index]["task"]),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed:(){
-                      FirebaseFirestore.instance
-                        .collection("tasks")
-                        .doc(taskData.id)
-                        .delete();
-                    },
+                  final isDone = taskData["isDone"]??false;
+
+                return AnimatedOpacity(
+                  opacity: isDone? 0.4:1.0,
+                  duration: Duration(milliseconds: 300),
+                  child : ListTile(
+                    leading: Checkbox(
+                      value: isDone,
+                      onChanged:(bool? value) async{
+                        await FirebaseFirestore.instance
+                          .collection("tasks")
+                          .doc(taskData.id)
+                          .update({"isDone": value??false});
+                          setState(() {});
+                      },
+                    ), 
+                                        
+                    title: Text(
+                      taskData["task"],
+                      style: TextStyle(
+                        decoration: isDone
+                          ?TextDecoration.lineThrough
+                          :TextDecoration.none,
+                      ),
+                    ),
+                    trailing: IconButton(
+                      icon : Icon(Icons.delete),
+                      onPressed:(){
+                        FirebaseFirestore.instance
+                          .collection("tasks")
+                          .doc(taskData.id)
+                          .delete();
+                      }, 
+                    ),
                   ),
                 );
               },
