@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:todo/addtask_page.dart';
-import 'package:todo/login_page.dart'; //provides widgets like scaffold,text etc
+ //provides widgets like scaffold,text etc
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'firebase_options.dart';
+import 'package:todo/addtask_page.dart';
+import 'package:todo/login_page.dart';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -46,46 +49,80 @@ class HomePage extends StatefulWidget{
 }
 
 class HomePageState extends State<HomePage>{
-
-  List<String> tasks=[];  //normal array
-
   @override
   Widget build(BuildContext context){
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    
     return Scaffold(
-      appBar: AppBar(title:Text('Tasks')),
+      appBar: AppBar(
+        title:Text('Tasks'),
+        actions:[
+          IconButton(
+            icon : Icon(Icons.logout),
+            onPressed:(){
+              FirebaseAuth.instance.signOut();
+            },
+          )
+        ],
+      ),
 
       floatingActionButton: FloatingActionButton(
+        child : Icon(Icons.add),
         onPressed:() async{
-          final result = await Navigator.push(   //opens task page and waits for data
+          final task = await Navigator.push(   //opens task page and waits for data
             context,
             MaterialPageRoute(builder: (context)=> AddTaskPage()),
             );
 
-            if(result!=null && result.toString().trim().isNotEmpty){
-              setState(() {
-                tasks.add(result);  //adds task to the list
-              });
-            }
-        },
-        child: Icon(Icons.add),
-        ),
-
-        body: ListView.builder(
-          itemCount: tasks.length,  //shows task on screen one by one
-          itemBuilder: (context,index){
-            return ListTile(
-              title: Text(tasks[index]),
-              trailing: IconButton(
-                icon : Icon(Icons.delete),
-              onPressed:(){
-                setState(() {
-                  tasks.removeAt(index);
+            if(task!=null && task.toString().trim().isNotEmpty){
+                await FirebaseFirestore.instance  //adds task to the list
+                  .collection("tasks")
+                  .add({
+                    "task":task,
+                    "uid":uid,
+                    "createdAt":Timestamp.now(),
                 });
               }
-              ),
+            },
+          ),
+
+        body: StreamBuilder(
+          stream: FirebaseFirestore.instance
+            .collection("tasks")
+            .where("uid",isEqualTo:uid)
+            .orderBy("createdAt")
+            .snapshots(),   //for live updates
+          builder:(context,snapshot){ //streambuilder listens to firestore like radio
+            if(!snapshot.hasData) //snapshot contains the latest firestore data
+              return Center(child:CircularProgressIndicator());
+          
+            final docs = snapshot.data!.docs; //docs is a list of all the tasks
+
+            if (docs.isEmpty){
+              return Center(child: Text("No tasks yet!"));
+            }
+
+            return ListView.builder(
+              itemCount: docs.length,
+              itemBuilder: (context,index){
+                  final taskData=docs[index];
+                return ListTile(
+                  title: Text(docs[index]["task"]),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed:(){
+                      FirebaseFirestore.instance
+                        .collection("tasks")
+                        .doc(taskData.id)
+                        .delete();
+                    },
+                  ),
+                );
+              },
             );
           },
         ),
-    );
+      );
+    }
   }
-}
+
