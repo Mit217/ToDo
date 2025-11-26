@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatefulWidget{
-  @override
+  @override   //state is an data that can change and cause UI to update
   LoginPageState createState() => LoginPageState();
-}
+}//like a switch, state refers to on/off and when state changes(when u switch on), the light turns on(ui updates)
 
 class LoginPageState extends State<LoginPage>{
   final emailController = TextEditingController();
@@ -16,8 +16,6 @@ class LoginPageState extends State<LoginPage>{
       email: emailController.text.trim(), 
       password: passwordController.text.trim(),
       );
-
-      Navigator.pushReplacementNamed(context, "/home");
     }
     catch(e){
       print("LOGIN ERROR:$e");
@@ -27,8 +25,8 @@ class LoginPageState extends State<LoginPage>{
     }
   }
 
-  Future<void> register() async{
-    try{
+  Future<void> register() async{ //with async, the app continues running other code while waiting
+    try{  //async required for await
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: emailController.text.trim(), 
       password: passwordController.text.trim(),
@@ -38,12 +36,12 @@ class LoginPageState extends State<LoginPage>{
     catch(e){
       print("REGISTER ERROR :$e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
+        SnackBar(content: Text(e.toString())), //snackbar shows a temporary msg at bottom of screen
       );
     }
   }
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context){ //widget is return type
     return Scaffold(
       appBar: AppBar(title: Text("Login")),
       body: Padding(

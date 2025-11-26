@@ -59,12 +59,14 @@ class HomePageState extends State<HomePage>{
         actions:[
           IconButton(
             icon : Icon(Icons.logout),
-            onPressed:(){
-              FirebaseAuth.instance.signOut();
+            onPressed:() async{
+              await FirebaseAuth.instance.signOut();
             },
           )
         ],
       ),
+
+    
 
       floatingActionButton: FloatingActionButton(
         child : Icon(Icons.add),
