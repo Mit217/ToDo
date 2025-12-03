@@ -20,10 +20,53 @@ class MyApp extends StatelessWidget{  //stateless eg "hello" that doesnt need to
   Widget build(BuildContext context){ //build tells Flutter WHAT to show on screen
     return MaterialApp(   //buildcontext gives the location in widget tree eg who is the parent etc
       title:'ToDo',     //like the address
+      theme: ThemeData(
+        primarySwatch : Colors.blue,
+        scaffoldBackgroundColor: Color(0xFFF2F7FF),
+
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.blue.shade400,
+          foregroundColor: Colors.white,
+          elevation: 2,
+        ),
+
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Colors.blue.shade300,
+          foregroundColor: Colors.white,
+        ),
+
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue.shade300,
+            foregroundColor: Colors.white,
+            padding: EdgeInsets.symmetric(vertical: 12,horizontal: 20),
+            textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
+
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.blue,width: 1),
+          ),
+          focusedBorder:OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.blue.shade400,width: 2),
+          ),
+          labelStyle: TextStyle(color: Colors.blueGrey),
+        ),
+
+        checkboxTheme: CheckboxThemeData(
+          fillColor: MaterialStateProperty.all(Colors.blue.shade400),
+          checkColor: MaterialStateProperty.all(Colors.white),
+        ),
+      ),
       home:AuthGate(),
       routes:{
         "/home":(context)=>HomePage(),
-      }
+      },
     );
   }
 }

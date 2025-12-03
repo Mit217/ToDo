@@ -65,6 +65,7 @@ class LoginPageState extends State<LoginPage>{
               onPressed: login,
               child: Text("Login"),
               ),
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: register , 
               child: Text("Register"),
