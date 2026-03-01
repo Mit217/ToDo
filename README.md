@@ -45,6 +45,7 @@ Fields:
 
 ## Security
 Firestore rules enforce user-specific access:
+allow read, write: if request.auth != null && request.auth.uid == resource.data.uid;
 
 ## Deployment
 The application is deployed using Firebase Hosting.
